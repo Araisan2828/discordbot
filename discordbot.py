@@ -1,10 +1,10 @@
 import discord
 import sys
 
-# さいころの和を計算する用の関数
+#さいころの和を計算する用の関数
 from func import  diceroll
 
-TOKEN = '任意のトークン'
+TOKEN = 'MTA0MDU5MjEwMjY4MzMxMjIzOQ.GQYnXT.ZgcdEIy1Nyayjd-EcnCw0FbijmGp13vC5VqQg4'
 
 client = discord.Client()
 
