@@ -1,26 +1,39 @@
 import discord
-import traceback
-from discord.ext import commands
-from os import getenv
+import sys
 
-intents = discord.Intents.default()
-intents.message_content = True
+# さいころの和を計算する用の関数
+from func import  diceroll
 
-bot = commands.Bot(command_prefix='/', intents=intents)
+TOKEN = '任意のトークン'
 
+client = discord.Client()
 
-@bot.event
-async def on_command_error(ctx, error):
-    orig_error = getattr(error, "original", error)
-    error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
-    await ctx.send(error_msg)
+@client.event
+async def on_ready():
+    print('--------------')
+    print('ログインしました')
+    print(client.user.name)
+    print(client.user.id)
+    print('--------------')
+    channel = client.get_channel('チャンネルID')
+    await channel.send('楽しいTRPGを始めましょう！')
 
+@client.event
+async def on_message(message):
+    if message.author.bot:
+        return
+    if message.content.startswith("!dice"):
+        # 入力された内容を受け取る
+        say = message.content 
 
-@bot.command()
-async def ping(ctx):
-    await ctx.send('pong')
+        # [!dice ]部分を消し、AdBのdで区切ってリスト化する
+        order = say.strip('!dice ')
+        cnt, mx = list(map(int, order.split('d'))) # さいころの個数と面数
+        dice = diceroll(cnt, mx) # 和を計算する関数(後述)
+        await message.channel.send(dice[cnt])
+        del dice[cnt]
 
+        # さいころの目の総和の内訳を表示する
+        await message.channel.send(dice)
 
-token = getenv('DISCORD_BOT_TOKEN')
-bot.run(token)
-
+client.run(TOKEN)
